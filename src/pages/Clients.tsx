@@ -9,7 +9,8 @@ import {
 import { useEffect, useState } from "react";
 import { Client as IClient } from "../interfaces";
 import { clientsMock } from "../mocks";
-import { useToggle } from "../hooks";
+import { useToggle, useDebounce } from "../hooks";
+import { useGetCustomers } from "../api";
 
 export const Clients = () => {
 	const [clients, setClients] = useState<IClient[]>([]);
@@ -23,16 +24,24 @@ export const Clients = () => {
 		{ label: "edad", value: "birthdate" },
 	];
 
+	const { isError, isLoading, mutate } = useGetCustomers();
+	const [search, setSearch] = useState("");
+	const debouncedValue = useDebounce<string>(search, 500);
+
 	useEffect(() => {
-		setClients(clientsMock);
-		setClients((prevState) => orderClients(prevState, currentOrderOption));
-	}, []);
+		mutate(search, {
+			onSuccess: (data) => {
+				setClients(data);
+				setClients((prevState) => orderClients(prevState, currentOrderOption));
+			}
+		});
+	}, [debouncedValue]);
 
 	const orderClients = (
 		clients: IClient[],
 		currentOrderOption: string,
 	): IClient[] => {
-		let key = currentOrderOption as keyof (typeof clients)[0];
+		const key = currentOrderOption as keyof (typeof clients)[0];
 
 		const newClients: IClient[] = clients.sort((a: IClient, b: IClient) => {
 			if (a[key] > b[key]) return 1;
@@ -51,7 +60,7 @@ export const Clients = () => {
 		if (searchWord === "") {
 			setClients(clientsMock);
 		} else {
-			let newClients = clientsMock.filter((client) => {
+			const newClients = clientsMock.filter((client) => {
 				if (searchWord === client.customerId.toString()) {
 					return client;
 				}
@@ -81,7 +90,7 @@ export const Clients = () => {
 					/>
 					<SearchInput
 						Icon={IconUser}
-						onSearch={(e) => handleSearch(e.target.value)}
+						onSearch={(e) => setSearch(e.target.value)}
 						propertie="clientes"
 					>
 						<button
@@ -96,6 +105,7 @@ export const Clients = () => {
 			</Header>
 
 			<section className="flex flex-col items-center h-[calc(100vh-10rem)] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				{/* FETCHING DATA */}
 				<ul
 					role="list"
 					className="my-4 overflow-auto divide-y divide-gray-100"

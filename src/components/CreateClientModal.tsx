@@ -1,4 +1,6 @@
+import { FormEvent } from "react";
 import { Modal } from ".";
+import { httpClient } from "../http";
 
 interface Props {
 	isOpen: boolean;
@@ -6,9 +8,17 @@ interface Props {
 }
 
 export const CreateClientModal = ({ isOpen, onClose }: Props) => {
+
+	const onSubmit = (e: FormEvent) => {
+		e.preventDefault();
+		// await httpClient.post("/customers", {
+			
+		// });
+	};
+
 	return (
 		<Modal isOpen={isOpen} onClose={onClose}>
-			<form>
+			<form onSubmit={onSubmit}>
 				<div className="mb-6">
 					<label
 						htmlFor="name"
