@@ -8,7 +8,7 @@ import {
 	Header,
 	SearchInput,
 } from "../components";
-import { useToggle } from "../hooks";
+import { useToggle, useDebounce } from "../hooks";
 import { useGetCustomers } from "../api";
 import { Client as IClient } from "../interfaces";
 import { FetchingData } from "../components/FetchingData";
@@ -43,12 +43,12 @@ export const Clients = () => {
 
 	const [search, setSearch] = useState("");
 	const [clients, setClients] = useState<IClient[]>([]);
-
+	const debouncedValue = useDebounce<string>(search, 500);
 	const { isError, isLoading, mutate } = useGetCustomers();
 
 	useEffect(() => {
 		getCustomersInfo();
-	}, [search]);
+	}, [search, debouncedValue]);
 
 	const handleDropdown = (e: ChangeEvent<HTMLSelectElement>) => {
 		setCurrentOrderOption(e.target.value);
@@ -57,7 +57,10 @@ export const Clients = () => {
 
 	const getCustomersInfo = () => {
 		mutate(search, {
-			onSuccess: (data) => setClients(data),
+			onSuccess: (data) => {
+				setClients(data);
+				setClients((prevState) => orderClients(prevState, currentOrderOption));
+			},
 		});
 	};
 
