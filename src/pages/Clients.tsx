@@ -48,7 +48,7 @@ export const Clients = () => {
 
 	useEffect(() => {
 		getCustomersInfo();
-	}, [search, debouncedValue]);
+	}, [debouncedValue]);
 
 	const handleDropdown = (e: ChangeEvent<HTMLSelectElement>) => {
 		setCurrentOrderOption(e.target.value);

@@ -1,3 +1,5 @@
+import Logo from "../assets/bank-logo.png";
+
 interface Props {
 	name: string;
 	cardNumber: string;
@@ -20,7 +22,7 @@ export const CreditCard = ({ name, cardNumber, balance }: Props) => {
 					</div>
 					<img
 						className="w-14 h-14"
-						src="https://i.imgur.com/bbPHJVe.png"
+						src={Logo}
 					/>
 				</div>
 

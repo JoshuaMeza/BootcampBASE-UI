@@ -1,13 +1,15 @@
 import { IconCoin } from "@tabler/icons-react";
 import { ChangeEvent, useEffect, useState } from "react";
-
-import { currenciesMock } from "../mocks";
+import { useDebounce } from "../hooks";
 import { Currency as ICurrency } from "../interfaces";
 import { Currency, DropdownOrderBy, Header, SearchInput } from "../components";
+import { useGetCurrencies } from "../api";
 
 export const Currencies = () => {
 	const [currencies, setCurrencies] = useState<ICurrency[]>([]);
 	const [currentOrderOption, setCurrentOrderOption] = useState("");
+	const [search, setSearch] = useState("");
+	const debouncedValue = useDebounce<string>(search, 500);
 
 	const orderOptions = [
 		{ label: "Nombre", value: "name" },
@@ -15,9 +17,11 @@ export const Currencies = () => {
 		{ label: "Valor de cambio", value: "value" },
 	];
 
+	const { isError, isLoading, mutate } = useGetCurrencies();
+
 	useEffect(() => {
-		setCurrencies(currenciesMock);
-	}, []);
+		handleSearch(search);
+	}, [debouncedValue]);
 
 	const orderCurrencies = (
 		currencies: ICurrency[],
@@ -41,16 +45,20 @@ export const Currencies = () => {
 	};
 
 	const handleSearch = (query: string) => {
-		if (query === "") {
-			setCurrencies(currenciesMock);
-		} else {
-			const filteredCurrencies = currenciesMock.filter((currency) => {
-				if (currency.name.toLowerCase().includes(query.toLowerCase()))
-					return currency;
-			});
-
-			setCurrencies(filteredCurrencies);
-		}
+		mutate(undefined, {
+			onSuccess: (data) => {
+				if (query === "") {
+					setCurrencies(data);
+				} else {
+					const filteredCurrencies = data.filter((currency) => {
+					if (currency.name.toLowerCase().includes(query.toLowerCase()))
+						return currency;
+					});
+		
+					setCurrencies(filteredCurrencies);
+				}
+			}
+		});
 	};
 
 	return (
@@ -67,7 +75,7 @@ export const Currencies = () => {
 					/>
 					<SearchInput
 						Icon={IconCoin}
-						onSearch={(e) => handleSearch(e.target.value)}
+						onSearch={(e) => setSearch(e.target.value)}
 						propertie="divisa"
 					/>
 				</div>
