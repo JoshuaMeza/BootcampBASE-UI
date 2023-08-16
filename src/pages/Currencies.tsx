@@ -17,7 +17,7 @@ export const Currencies = () => {
 		{ label: "Valor de cambio", value: "value" },
 	];
 
-	const { isError, isLoading, mutate } = useGetCurrencies();
+	const { mutate } = useGetCurrencies();
 
 	useEffect(() => {
 		handleSearch(search);

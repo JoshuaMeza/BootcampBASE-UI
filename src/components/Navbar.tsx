@@ -1,6 +1,7 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { Fragment } from "react";
+import { Link } from "react-router-dom";
 
 import Logo from "../assets/logo-min.png";
 import { useLocation } from "react-router-dom";
@@ -55,23 +56,13 @@ export const Navbar = () => {
 									<div className="ml-10 flex items-baseline space-x-4">
 										{navigation.map(
 											({ current, href, name }) => (
-												<a
-													key={name}
-													href={href}
-													className={classNames(
-														current
-															? "bg-gray-900 text-white"
+												<Link to={href} className={classNames(
+													current ? "bg-gray-900 text-white"
 															: "text-gray-300 hover:bg-gray-700 hover:text-white",
-														"rounded-md px-3 py-2 text-sm font-medium",
-													)}
-													aria-current={
-														current
-															? "page"
-															: undefined
-													}
-												>
+													"rounded-md px-3 py-2 text-sm font-medium",
+													)}>
 													{name}
-												</a>
+												</Link>
 											),
 										)}
 									</div>

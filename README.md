@@ -1,5 +1,12 @@
 # Frontend Bootcamp UADY-BASE
 
+### Despliegue
+
+### Imágenes
+
+- [Nginx](https://hub.docker.com/_/nginx)
+- [Node](https://hub.docker.com/_/node)
+
 ### Requerimientos
 
 Es necesario contar previamente con la instalación de:
